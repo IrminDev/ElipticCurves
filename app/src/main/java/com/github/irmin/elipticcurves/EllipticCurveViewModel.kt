@@ -66,7 +66,7 @@ class EllipticCurveViewModel : ViewModel() {
 
         // Check curve is non-singular: 4a^3 + 27b^2 != 0 (mod p)
         val discriminant = (4L * modPow(a, 3, p) + 27L * modMul(b, b, p)) % p
-        if (discriminant != 0L) {
+        if (discriminant < 0L) {
             _state.update { it.copy(errorMessage = "La curva es singular (discriminante ≡ 0 mod p). Por favor elige otros valores.") }
             return
         }
