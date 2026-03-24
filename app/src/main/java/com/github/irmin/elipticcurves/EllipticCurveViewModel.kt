@@ -19,6 +19,7 @@ data class EllipticCurveState(
     val pInput: String = "",
     val tableRows: List<CurveTableRow> = emptyList(),
     val points: List<Pair<Int, Int>> = emptyList(),
+    val generators: Set<Pair<Int, Int>> = emptySet(),
     val errorMessage: String? = null,
     val calculated: Boolean = false
 )
@@ -99,17 +100,39 @@ class EllipticCurveViewModel : ViewModel() {
                 )
             )
         }
+        val totalPointsCount = points.size
+        val generators = mutableSetOf<Pair<Int, Int>>()
+
+        for (point in points) {
+            if (point.first == Int.MAX_VALUE) continue
+
+            val px = point.first.toLong()
+            val py = point.second.toLong()
+
+            var count = 1
+            var currentPoint: Pair<Long, Long>? = Pair(px, py)
+
+            while (currentPoint != null) {
+                currentPoint = addPoints(currentPoint.first, currentPoint.second, px, py, a, p)
+                count++
+                if (count > totalPointsCount) break
+            }
+
+            if (count == totalPointsCount) {
+                generators.add(point)
+            }
+        }
 
         _state.update {
             it.copy(
                 tableRows = rows,
                 points = points,
+                generators = generators,
                 errorMessage = null,
                 calculated = true
             )
         }
     }
-
     // Simple primality test (sufficient for small p)
     private fun isPrime(n: Long): Boolean {
         if (n < 2) return false
@@ -138,6 +161,44 @@ class EllipticCurveViewModel : ViewModel() {
     // Modular multiplication
     private fun modMul(a: Long, b: Long, mod: Long): Long {
         return (a.mod(mod)) * (b.mod(mod)) % mod
+    }
+    private fun addPoints(
+        x1: Long?, y1: Long?,
+        x2: Long?, y2: Long?,
+        a: Long, p: Long
+    ): Pair<Long, Long>? {
+        if (x1 == null) return if (x2 == null) null else Pair(x2, y2!!)
+        if (x2 == null) return Pair(x1, y1!!)
+
+        val x1m = x1.mod(p)
+        val y1m = y1!!.mod(p)
+        val x2m = x2.mod(p)
+        val y2m = y2!!.mod(p)
+
+        if (x1m == x2m && (y1m + y2m) % p == 0L) return null
+
+        val lambda: Long = if (x1m == x2m && y1m == y2m) {
+            if (y1m == 0L) return null
+            val num = (3L * modPow(x1m, 2, p) + a.mod(p)).mod(p)
+            val den = (2L * y1m).mod(p)
+            if (den == 0L) return null
+            num * inverseMod(den, p) % p
+        } else {
+            val num = (y2m - y1m + p).mod(p)
+            val den = (x2m - x1m + p).mod(p)
+            if (den == 0L) return null
+            num * inverseMod(den, p) % p
+        }
+
+        val x3 = (modPow(lambda, 2, p) - x1m - x2m + p * 2).mod(p)
+        val y3 = (lambda * (x1m - x3 + p * 2).mod(p) - y1m + p * 2).mod(p)
+
+        return Pair(x3, y3)
+    }
+
+    private fun inverseMod(a: Long, p: Long): Long {
+        val am = ((a % p) + p) % p
+        return modPow(am, p - 2, p)
     }
 }
 

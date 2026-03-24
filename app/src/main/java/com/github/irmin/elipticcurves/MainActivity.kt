@@ -286,7 +286,10 @@ fun EllipticCurveScreen(
                             modifier = Modifier.padding(bottom = 8.dp)
                         )
                         Box(modifier = Modifier.horizontalScroll(rememberScrollState())) {
-                            CurveTable(rows = state.tableRows, p = p)
+                            CurveTable(
+                                rows = state.tableRows, p = p,
+                                generators = state.generators
+                            )
                         }
                     }
                 }
@@ -331,7 +334,7 @@ fun EllipticCurveScreen(
 
 // ── Table composables ──────────────────────────────────────────────────────────
 @Composable
-fun CurveTable(rows: List<CurveTableRow>, p: Long) {
+fun CurveTable(rows: List<CurveTableRow>, p: Long, generators: Set<Pair<Int, Int>>) {
     val headerBg = MaterialTheme.colorScheme.primaryContainer
     val headerFg = MaterialTheme.colorScheme.onPrimaryContainer
     val altRowBg = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f)
@@ -363,9 +366,16 @@ fun CurveTable(rows: List<CurveTableRow>, p: Long) {
                 val yText = if (row.yValues.isNotEmpty()) row.yValues.joinToString(", ") else "—"
                 TableCell(text = yText, bg = Color.Transparent, borderColor = borderColor, width = 110)
 
-                val pointsText = if (row.yValues.isNotEmpty())
-                    row.yValues.joinToString("\n") { y -> "(${row.x}, $y)" }
-                else "—"
+                val pointsText = if (row.yValues.isNotEmpty()) {
+                    row.yValues.joinToString("\n") { y ->
+                        val pointPair = Pair(row.x, y)
+                        if (generators.contains(pointPair)) {
+                            "(${row.x}, $y) ⭐"
+                        } else {
+                            "(${row.x}, $y)"
+                        }
+                    }
+                } else "—"
                 TableCell(
                     text = pointsText,
                     bg = Color.Transparent,
