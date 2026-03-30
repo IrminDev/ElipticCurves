@@ -30,7 +30,8 @@ import com.github.irmin.elipticcurves.ui.theme.ElipticCurvesTheme
 fun MenuScreen(
     onNavigateToCurvePoints: () -> Unit,
     onNavigateToPointSum: () -> Unit,
-    onNavigateToMultiplication: () -> Unit
+    onNavigateToMultiplication: () -> Unit,
+    onNavigateToScalarTable: () -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -75,6 +76,12 @@ fun MenuScreen(
                 subtitle = "Calcula la multiplicación de\nkP sobre la curva elípitica",
                 onClick = onNavigateToMultiplication
             )
+
+            MenuButton(
+                title = "Tabla de Multiplicación Escalar",
+                subtitle = "Imprime kP para cada punto\ny múltiples escalares",
+                onClick = onNavigateToScalarTable
+            )
         }
     }
 }
@@ -104,7 +111,8 @@ private fun MenuScreenPreview() {
         MenuScreen(
             onNavigateToCurvePoints = {},
             onNavigateToPointSum = {},
-            onNavigateToMultiplication = {}
+            onNavigateToMultiplication = {},
+            onNavigateToScalarTable = {}
         )
     }
 }

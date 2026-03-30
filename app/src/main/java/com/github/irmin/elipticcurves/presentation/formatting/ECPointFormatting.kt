@@ -8,3 +8,10 @@ internal fun ECPoint.toResultLabel(): String {
         is ECPoint.Affine -> "(${this.x}, ${this.y})"
     }
 }
+
+internal fun ECPoint.toCompactLabel(): String {
+    return when (this) {
+        ECPoint.Infinity -> "O"
+        is ECPoint.Affine -> "(${this.x}, ${this.y})"
+    }
+}
