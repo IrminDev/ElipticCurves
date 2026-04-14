@@ -6,4 +6,5 @@ internal object Routes {
     const val POINT_SUM = "point_sum"
     const val POINT_MUL = "point_mul"
     const val SCALAR_TABLE = "scalar_table"
+    const val POINT_ADD_TABLE = "point_add_table"
 }

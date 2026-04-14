@@ -31,7 +31,8 @@ fun MenuScreen(
     onNavigateToCurvePoints: () -> Unit,
     onNavigateToPointSum: () -> Unit,
     onNavigateToMultiplication: () -> Unit,
-    onNavigateToScalarTable: () -> Unit
+    onNavigateToScalarTable: () -> Unit,
+    onNavigateToPointAdditionTable: () -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -82,6 +83,12 @@ fun MenuScreen(
                 subtitle = "Imprime kP para cada punto\ny múltiples escalares",
                 onClick = onNavigateToScalarTable
             )
+
+            MenuButton(
+                title = "Tabla de Suma de Puntos",
+                subtitle = "Imprime P + Q para todos los puntos\nincluyendo O (infinito)",
+                onClick = onNavigateToPointAdditionTable
+            )
         }
     }
 }
@@ -112,7 +119,8 @@ private fun MenuScreenPreview() {
             onNavigateToCurvePoints = {},
             onNavigateToPointSum = {},
             onNavigateToMultiplication = {},
-            onNavigateToScalarTable = {}
+            onNavigateToScalarTable = {},
+            onNavigateToPointAdditionTable = {}
         )
     }
 }

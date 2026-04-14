@@ -10,6 +10,7 @@ import androidx.navigation.compose.rememberNavController
 import com.github.irmin.elipticcurves.ui.navigation.Routes
 import com.github.irmin.elipticcurves.ui.screens.EllipticCurveScreen
 import com.github.irmin.elipticcurves.ui.screens.MenuScreen
+import com.github.irmin.elipticcurves.ui.screens.PointAdditionTableScreen
 import com.github.irmin.elipticcurves.ui.screens.PointMultiplicationScreen
 import com.github.irmin.elipticcurves.ui.screens.PointSumScreen
 import com.github.irmin.elipticcurves.ui.screens.ScalarMultiplicationTableScreen
@@ -28,7 +29,8 @@ class MainActivity : ComponentActivity() {
                             onNavigateToCurvePoints = { navController.navigate(Routes.CURVE_POINTS) },
                             onNavigateToPointSum = { navController.navigate(Routes.POINT_SUM) },
                             onNavigateToMultiplication = { navController.navigate(Routes.POINT_MUL) },
-                            onNavigateToScalarTable = { navController.navigate(Routes.SCALAR_TABLE) }
+                            onNavigateToScalarTable = { navController.navigate(Routes.SCALAR_TABLE) },
+                            onNavigateToPointAdditionTable = { navController.navigate(Routes.POINT_ADD_TABLE) }
                         )
                     }
                     composable(Routes.CURVE_POINTS) {
@@ -43,6 +45,10 @@ class MainActivity : ComponentActivity() {
 
                     composable(Routes.SCALAR_TABLE) {
                         ScalarMultiplicationTableScreen(onBack = { navController.popBackStack() })
+                    }
+
+                    composable(Routes.POINT_ADD_TABLE) {
+                        PointAdditionTableScreen(onBack = { navController.popBackStack() })
                     }
                 }
             }
