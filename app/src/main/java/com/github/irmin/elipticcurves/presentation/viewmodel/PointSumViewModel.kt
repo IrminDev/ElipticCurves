@@ -57,6 +57,15 @@ class PointSumViewModel : ViewModel() {
 
         val curve = EllipticCurve(a = a, b = b, p = p)
 
+        if (!curve.isNonSingular()) {
+            _state.update {
+                it.copy(
+                    errorMessage = "La curva es singular (discriminante ≡ 0 mod p). Por favor elige otros valores."
+                )
+            }
+            return
+        }
+
         val p1IsInf = s.p1IsInfinity
         val p2IsInf = s.p2IsInfinity
 
