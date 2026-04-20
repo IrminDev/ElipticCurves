@@ -20,6 +20,7 @@ data class EllipticCurve(
 
     fun isNonSingular(): Boolean = discriminant() != 0L
 
+    // Devuelve: (x^3 + ax + b \pmod p) [right-hand side]
     fun rhs(x: Long): Long {
         val xm = ModArithmetic.mod(x, p)
         val x3 = ModArithmetic.modPow(xm, 3, p)

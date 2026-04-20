@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.github.irmin.elipticcurves.domain.ECPoint
 import com.github.irmin.elipticcurves.domain.EllipticCurve
 import com.github.irmin.elipticcurves.domain.ModArithmetic
+import com.github.irmin.elipticcurves.domain.curveOrder
 import com.github.irmin.elipticcurves.presentation.formatting.toResultLabel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -62,6 +63,20 @@ class PointMultiplicationViewModel : ViewModel() {
             _state.update {
                 it.copy(
                     errorMessage = "La curva es singular (discriminante ≡ 0 mod p). Por favor elige otros valores."
+                )
+            }
+            return
+        }
+
+        val curveOrder = curve.curveOrder()
+        if (curveOrder <= 1) {
+            _state.update { it.copy(errorMessage = "No se pudo determinar un conjunto de puntos válido para la curva.") }
+            return
+        }
+        if (k <= 0L || k >= curveOrder.toLong()) {
+            _state.update {
+                it.copy(
+                    errorMessage = "k debe estar en el rango 1 ≤ k < |E|. Para esta curva, |E| = $curveOrder."
                 )
             }
             return

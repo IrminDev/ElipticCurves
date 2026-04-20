@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.github.irmin.elipticcurves.domain.ECPoint
 import com.github.irmin.elipticcurves.domain.EllipticCurve
 import com.github.irmin.elipticcurves.domain.ModArithmetic
+import com.github.irmin.elipticcurves.domain.enumeratePoints
 import com.github.irmin.elipticcurves.presentation.formatting.toCompactLabel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -62,18 +63,7 @@ class ScalarMultiplicationTableViewModel : ViewModel() {
             return
         }
 
-        val points = buildList {
-            add(ECPoint.Infinity)
-            for (x in 0 until p.toInt()) {
-                val ex = curve.rhs(x.toLong()).toInt()
-                for (y in 0 until p.toInt()) {
-                    val ySquaredMod = ModArithmetic.modPow(y.toLong(), 2, p).toInt()
-                    if (ySquaredMod == ex) {
-                        add(ECPoint.Affine(x.toLong(), y.toLong()))
-                    }
-                }
-            }
-        }
+        val points = curve.enumeratePoints()
 
         val n = points.size
         val multipliers = if (n >= 2) (2..n).toList() else emptyList()

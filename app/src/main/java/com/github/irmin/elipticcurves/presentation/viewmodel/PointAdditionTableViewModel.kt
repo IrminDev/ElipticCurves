@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.github.irmin.elipticcurves.domain.ECPoint
 import com.github.irmin.elipticcurves.domain.EllipticCurve
 import com.github.irmin.elipticcurves.domain.ModArithmetic
+import com.github.irmin.elipticcurves.domain.enumeratePoints
 import com.github.irmin.elipticcurves.presentation.formatting.toCompactLabel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -54,7 +55,7 @@ class PointAdditionTableViewModel : ViewModel() {
             return
         }
 
-        val points = enumeratePoints(curve = curve, p = p)
+        val points = curve.enumeratePoints()
         val pointLabels = points.map { it.toCompactLabel() }
 
         val table = points.map { rowPoint ->
@@ -70,21 +71,6 @@ class PointAdditionTableViewModel : ViewModel() {
                 errorMessage = null,
                 calculated = true
             )
-        }
-    }
-
-    private fun enumeratePoints(curve: EllipticCurve, p: Long): List<ECPoint> {
-        return buildList {
-            add(ECPoint.Infinity)
-            for (x in 0 until p.toInt()) {
-                val ex = curve.rhs(x.toLong()).toInt()
-                for (y in 0 until p.toInt()) {
-                    val ySquaredMod = ModArithmetic.modPow(y.toLong(), 2, p).toInt()
-                    if (ySquaredMod == ex) {
-                        add(ECPoint.Affine(x.toLong(), y.toLong()))
-                    }
-                }
-            }
         }
     }
 }
